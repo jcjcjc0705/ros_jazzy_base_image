@@ -1,0 +1,13 @@
+.devcontainer/
+.git/
+.github/
+.gitlab/
+.idea/
+.vscode/
+scripts/
+.dockerignore
+.gitignore
+.gitmodules
+Dockerfile
+LICENSE
+README.md
