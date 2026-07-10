@@ -70,3 +70,11 @@ docker pull tonistiigi/binfmt:latest
 docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
 docker run --privileged --rm tonistiigi/binfmt --install all
 ```
+
+`docker exec -it <container> bash` into an already-running container does **not** go through `ENTRYPOINT` — `ros2`, `r`, and any workspace overlay under `/workspaces/install` won't be set up. Use:
+
+```bash
+docker exec -it <container> /ros_entrypoint.bash bash
+```
+
+so this exec'd process sources the same environment the container's main process did at startup.
