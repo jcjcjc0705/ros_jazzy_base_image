@@ -58,14 +58,15 @@ RUN apt install -y \
 # This image intentionally installs into the system Python, so opt out globally.
 RUN printf "[install]\nbreak-system-packages = true\n" > /etc/pip.conf
 
-RUN pip3 install --no-cache-dir --upgrade pip && \
+RUN pip3 install --no-cache-dir --upgrade --ignore-installed pip && \
     pip3 install --no-cache-dir -r /tmp/requirements.txt && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/batcat /usr/bin/bat && \
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" && \
     mv /tmp/.bashrc /root && \
-    ln -s /root/.bashrc /.bashrc && \
-    /lib/systemd/systemd-udevd --daemon || true
+    ln -s /root/.bashrc /.bashrc
+
+RUN /lib/systemd/systemd-udevd --daemon || true
 
 ##### ROS2 Installation #####
 RUN apt install -y \
