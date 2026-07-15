@@ -35,7 +35,7 @@ build_amd64:
     - *docker_login
   script:
     - *threads_setup
-    - docker build --build-arg THREADS=$THREADS --provenance=false --platform linux/amd64 -t $IMAGE_TAG_AMD64 .
+    - docker build --pull --build-arg THREADS=$THREADS --provenance=false --platform linux/amd64 -t $IMAGE_TAG_AMD64 .
     - docker push $IMAGE_TAG_AMD64
 
 # arm64 runner uses the shell executor with docker already installed on the
@@ -50,7 +50,7 @@ build_amd64:
 #     - *docker_login
 #   script:
 #     - *threads_setup
-#     - docker build --build-arg THREADS=$THREADS --provenance=false --platform linux/arm64 -t $IMAGE_TAG_ARM64 .
+#     - docker build --pull --build-arg THREADS=$THREADS --provenance=false --platform linux/arm64 -t $IMAGE_TAG_ARM64 .
 #     - docker push $IMAGE_TAG_ARM64
 #
 # publish_manifest:
