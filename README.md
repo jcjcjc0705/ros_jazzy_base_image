@@ -59,18 +59,18 @@ bash scripts/local_buildx_push.sh -t 1.0.0
 
 ## CI/CD
 
-Builds run on GitHub Actions ([`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml)).
+Builds run on GitHub Actions ([`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml)). amd64 (`ubuntu-24.04`) and arm64 (`ubuntu-24.04-arm`) build natively on separate runners, then get combined into one multi-arch image at `ghcr.io/<repo owner>/ros_jazzy_base_image`. No secrets are needed; it uses the built-in `GITHUB_TOKEN`.
 
-Pushing a tag builds amd64 (`ubuntu-24.04`) and arm64 (`ubuntu-24.04-arm`) natively on separate runners, then combines them into one multi-arch manifest and pushes it to GHCR under both the tag name and `latest`:
+There are two ways to publish:
 
-```bash
-git tag 0.2.0
-git push origin 0.2.0
-```
+- **Push a version tag** such as `1.0.0`, `v1.0.0` or `1.0.0-rc1`. A leading `v` is dropped from the image tag. The image is also tagged `latest`, unless the version has a suffix such as `-rc1` (a pre-release).
 
-You can also start a build from the **Actions** tab (*Run workflow*). A manual run on a branch only publishes `sha-<short commit>`, so `latest` doesn't move.
+  ```bash
+  git tag -a 0.2.0 -m "Release 0.2.0"
+  git push origin 0.2.0
+  ```
 
-The image goes to `ghcr.io/<repo owner>/ros_jazzy_base_image`, using the built-in `GITHUB_TOKEN`, so no secrets are needed.
+- **Run it from the Actions tab**: *Build and publish Docker image* → *Run workflow*, then enter a version and choose whether to also tag it `latest`. It builds the branch or tag picked under *Use workflow from* and doesn't create a git tag.
 
 ## Troubleshooting
 
