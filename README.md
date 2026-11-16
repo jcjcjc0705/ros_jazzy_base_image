@@ -41,6 +41,16 @@ source /workspaces/rebuild_colcon.rc
 
 which runs `colcon build --symlink-install` in `/workspaces` and sources `install/setup.bash`.
 
+## Environment
+
+Every shell gets its ROS environment from the top of `/root/.bashrc`: the container's main process (the entrypoint sources that file) and `docker exec -it <container> bash` alike. In order:
+
+1. `/opt/ros/$ROS_DISTRO/setup.bash`
+2. `$ROS_UNDERLAY/setup.bash`, if a derived image sets `ROS_UNDERLAY` (`ros2_control_image` sets it to `/opt/ros2_control_ws/install`)
+3. `$ROS2_WS/install/setup.bash`, i.e. `/workspaces`, once something has been built there (`r`)
+
+A derived image that builds its own packages outside `/workspaces` only needs `ENV ROS_UNDERLAY=<its install directory>`, not an entrypoint of its own.
+
 ## Run
 
 ```bash
@@ -82,10 +92,8 @@ docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
 docker run --privileged --rm tonistiigi/binfmt --install all
 ```
 
-`docker exec -it <container> bash` into an already-running container does **not** go through `ENTRYPOINT` — `ros2`, `r`, and any workspace overlay under `/workspaces/install` won't be set up. Use:
+A non-interactive `docker exec <container> bash -c '...'` doesn't read `.bashrc`, so `ros2` isn't on the `PATH` there. Run it through the entrypoint instead:
 
 ```bash
-docker exec -it <container> /ros_entrypoint.bash bash
+docker exec <container> /ros_entrypoint.bash bash -c 'ros2 topic list'
 ```
-
-so this exec'd process sources the same environment the container's main process did at startup.
